@@ -11,7 +11,7 @@ name: $(majorMinor).$(Rev:r)
 trigger:
   branches:
     include:
-      - main
+      - master
 
 pr: none
 
