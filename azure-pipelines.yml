@@ -25,7 +25,7 @@ variables:
   imageTag: 'v$(Build.BuildNumber)'      # tag semântica, ex.: v1.0.7 (nunca latest)
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-24.04'
 
 stages:
 # ---------------------------------------------------------------- TESTES
@@ -61,9 +61,34 @@ stages:
 
     - script: |
         cd e2e
+
+        echo "=================================="
+        echo "Versão do Node"
+        node --version
+
+        echo "Versão do NPM"
+        npm --version
+
+        echo "=================================="
+        echo "Instalando dependências do projeto"
+
         npm ci
-        npx playwright install --with-deps chromium
+
+        echo "=================================="
+        echo "Verificando versão do Playwright"
+
+        npx playwright --version
+
+        echo "=================================="
+        echo "Instalando Chromium"
+
+        npx playwright install chromium
+
+        echo "=================================="
+        echo "Executando testes E2E"
+
         CI=true BASE_URL=http://localhost:8080 npx playwright test
+
       displayName: 'Rodar testes Playwright'
 
     - task: PublishTestResults@2
