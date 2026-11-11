@@ -1,0 +1,20 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+.venv
+venv
+__pycache__
+*.py[cod]
+db.sqlite3
+staticfiles
+.pytest_cache
+.DS_Store
+# arquivos que não fazem parte das imagens
+e2e
+docs
+database
+node_modules
+azure-pipelines.yml
+docker-compose*.yml

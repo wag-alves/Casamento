@@ -1,0 +1,531 @@
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=Oswald:wght@400;500;600;700&family=Dancing+Script:wght@700&display=swap');
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    background: #1a1a1a;
+    color: #1a1a1a;
+    font-family: 'Oswald', sans-serif;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Site preenche a tela inteira, sem margens/vazios ao redor */
+.newspaper {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #faf7f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- Nav ---------- */
+.topnav {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    background: #1a1a1a;
+    border-bottom: 1px solid #444;
+}
+.topnav a {
+    flex: 1;
+    text-align: center;
+    color: #faf7f0;
+    text-decoration: none;
+    padding: 12px 8px;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-right: 1px solid #333;
+}
+.topnav a:last-child { border-right: none; }
+.topnav a.ativo, .topnav a:hover { background: #faf7f0; color: #1a1a1a; }
+
+/* ---------- Masthead ---------- */
+.masthead {
+    display: grid;
+    grid-template-columns: 90px 1fr 90px;
+    align-items: center;
+    border-bottom: 3px double #1a1a1a;
+}
+.masthead .edicao {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    padding: 8px 2px;
+}
+.masthead .edicao.left { border-right: 1px solid #1a1a1a; }
+.masthead .edicao.right { border-left: 1px solid #1a1a1a; }
+.masthead h1 {
+    font-family: 'Oswald', sans-serif;
+    text-align: center;
+    font-size: 2.7rem;
+    margin: 6px 0;
+    letter-spacing: 1px;
+}
+
+.dateline {
+    background: #1a1a1a;
+    color: #faf7f0;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 14px;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+/* ---------- Hero video (preenche a tela, sem espaço vazio) ---------- */
+.hero-video-wrap {
+    position: relative;
+    width: 100%;
+    height: 130vh;
+    min-height: 340px;
+    max-height: 640px;
+    overflow: hidden;
+    border-bottom: 3px solid #1a1a1a;
+    border-top: 3px solid #1a1a1a;
+    background: #000;
+}
+/* .hero-video-wrap video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+    filter: grayscale(100%) contrast(1.05);
+} */
+/* .hero-video-wrap video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%; /* Altere o '30%' para mais ou menos até focar exatamente nos rostos */
+
+/* .hero-video-wrap video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que o vídeo não fique distorcido/esticado */
+ /* Ajusta o foco vertical (mude a porcentagem se precisar subir ou descer) */
+
+ .hero-video-wrap video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Garante que o vídeo não fique distorcido/esticado */
+    /* O primeiro valor é horizontal (centralizado), o segundo é vertical (para subir/descer) */
+    object-position: center 28%; 
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.55) 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 18px;
+}
+.hero-overlay p {
+    color: #faf7f0;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.6rem;
+    margin: 0;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+}
+
+.headline-block {
+    text-align: center;
+    padding: 18px 20px 6px;
+}
+.headline-block .extra {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 1rem;
+    letter-spacing: 3px;
+    margin: 0 0 6px;
+}
+.headline-block .save {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(2.2rem, 10vw, 3.6rem);
+    line-height: 0.95;
+    margin: 0;
+    text-transform: uppercase;
+}
+.headline-block .the {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(1.6rem, 7vw, 2.6rem);
+    display: block;
+    margin: -4px 0;
+}
+.headline-block .date-num {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 6vw, 2.4rem);
+    letter-spacing: 4px;
+    margin-top: 6px;
+}
+
+.noivos-nome {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(1.5rem, 6vw, 2.1rem);
+    text-transform: uppercase;
+    margin: 6px 0 0;
+}
+.subtitulo {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    margin: 0 0 18px;
+}
+
+.divider { border: none; border-top: 1px solid #1a1a1a; margin: 10px 20px; }
+.divider.double { border-top: 3px double #1a1a1a; }
+
+.banner {
+    background: #1a1a1a;
+    color: #faf7f0;
+    text-align: center;
+    padding: 10px;
+    letter-spacing: 2px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    margin: 14px 20px;
+}
+
+/* ---------- Timer (contagem regressiva) ---------- */
+.timer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 0 20px 14px;
+    text-align: center;
+}
+.timer-bloco {
+    border: 2px solid #1a1a1a;
+    padding: 10px 4px 8px;
+    background: #faf7f0;
+}
+.timer-num {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 2rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.timer-rot {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.65rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #6b6b6b;
+}
+.timer-fim {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    margin: 0 20px 14px;
+}
+@media (max-width: 420px) {
+    .timer-num { font-size: 1.5rem; }
+    .timer-rot { font-size: 0.55rem; letter-spacing: 1px; }
+}
+
+/* ---------- Details columns ---------- */
+.detalhes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px 20px 20px;
+    text-align: center;
+}
+.detalhes div h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.68rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin: 0 0 4px;
+    color: #6b6b6b;
+}
+.detalhes div p { margin: 0; font-size: 0.95rem; font-weight: 600; }
+
+/* ---------- Botão CTA para lista de presentes na home ---------- */
+.cta-presentes {
+    margin: 6px 20px 20px;
+    text-align: center;
+    background: #fff;
+    border: 2px solid #1a1a1a;
+    padding: 18px;
+}
+.cta-presentes p { margin: 0 0 12px; font-style: italic; }
+.cta-presentes a {
+    display: inline-block;
+    background: #1a1a1a;
+    color: #faf7f0;
+    text-decoration: none;
+    padding: 12px 28px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+/* ---------- Form ---------- */
+.form-section { padding: 10px 20px 30px; flex: 1; }
+.form-section h2 {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: clamp(1.2rem, 5vw, 1.5rem);
+    margin-bottom: 4px;
+}
+.form-section .lead { text-align: center; font-style: italic; color: #444; margin-bottom: 20px; }
+
+.form-group { margin-bottom: 16px; }
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #1a1a1a;
+    background: #fff;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+}
+textarea.form-control { resize: vertical; }
+
+.radio-options { display: flex; flex-wrap: wrap; gap: 20px; }
+.radio-options label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.errorlist { color: #a11; list-style: none; padding: 0; margin: 4px 0 0; font-size: 0.85rem; }
+
+.btn-enviar {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: #1a1a1a;
+    color: #faf7f0;
+    border: none;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s ease;
+}
+.btn-enviar:hover { background: #3a3a3a; }
+.btn-enviar:disabled { background: #999; cursor: not-allowed; }
+
+.messages { list-style: none; padding: 0; margin: 0 20px 18px; }
+.messages li { padding: 12px 16px; border: 1px solid #1a1a1a; font-weight: 600; }
+.messages .success { background: #e4f3e4; }
+.messages .error { background: #f8dede; }
+
+footer.imprint {
+    background: #1a1a1a;
+    color: #cfcac0;
+    text-align: center;
+    padding: 16px;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    margin-top: auto;
+}
+
+/* ---------- Thank-you page ---------- */
+.obrigado-box { text-align: center; padding: 60px 24px; flex: 1; }
+.obrigado-box h1 { font-family: 'UnifrakturMaguntia', cursive; font-size: clamp(1.8rem, 8vw, 2.6rem); }
+.obrigado-box p { font-size: 1.05rem; }
+.obrigado-box a { display: inline-block; margin-top: 20px; color: #1a1a1a; font-weight: 600; text-decoration: underline; }
+
+/* ---------- Lista de presentes ---------- */
+.presentes-intro { text-align: center; padding: 20px 20px 4px; }
+.presentes-intro h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: clamp(1.3rem, 5.5vw, 1.8rem);
+    margin-bottom: 6px;
+}
+.presentes-intro p { font-style: italic; color: #444; margin: 0; }
+
+.presentes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+    padding: 18px 20px 30px;
+    flex: 1;
+}
+.presente-card {
+    border: 1px solid #1a1a1a;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 16px 10px;
+    text-decoration: none;
+    color: #1a1a1a;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.presente-card:hover { transform: translateY(-3px); box-shadow: 0 6px 14px rgba(0,0,0,0.15); }
+.presente-card .emoji { font-size: 2.2rem; margin-bottom: 8px; }
+.presente-card .nome { font-weight: 600; font-size: 0.95rem; margin: 0 0 4px; }
+.presente-card .valor { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.1rem; margin: 6px 0; }
+.presente-card .badge {
+    margin-top: auto;
+    padding-top: 8px;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.presente-card.disponivel .badge { color: #2a7a2a; }
+.presente-card.reservado {
+    opacity: 0.55;
+    background: #efefef;
+}
+.presente-card.reservado .badge { color: #a11; }
+
+/* ---------- Detalhe do presente / Pix ---------- */
+.presente-detalhe {
+    padding: 24px 20px;
+    text-align: center;
+    flex: 1;
+}
+.presente-detalhe .emoji-grande { font-size: 3.5rem; }
+.presente-detalhe h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin: 8px 0 2px;
+    font-size: clamp(1.3rem, 6vw, 1.8rem);
+}
+.presente-detalhe .desc { font-style: italic; color: #444; margin: 0 0 6px; }
+.presente-detalhe .valor-grande {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 2rem;
+    margin: 10px 0 20px;
+}
+
+.qrcode-box {
+    background: #fff;
+    border: 2px solid #1a1a1a;
+    padding: 20px;
+    max-width: 320px;
+    margin: 0 auto 20px;
+}
+.qrcode-box img { width: 100%; max-width: 240px; height: auto; }
+.qrcode-box p { font-size: 0.8rem; color: #555; margin: 10px 0 0; }
+
+.pix-copia {
+    max-width: 500px;
+    margin: 0 auto 26px;
+    text-align: left;
+}
+.pix-copia label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.pix-copia-linha { display: flex; gap: 8px; }
+.pix-copia textarea {
+    flex: 1;
+    font-family: monospace;
+    font-size: 0.75rem;
+    padding: 10px;
+    border: 1px solid #1a1a1a;
+    resize: none;
+    height: 60px;
+    background: #fff;
+}
+.btn-copiar {
+    background: #1a1a1a;
+    color: #faf7f0;
+    border: none;
+    padding: 0 16px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 0.8rem;
+}
+.btn-copiar:hover { background: #3a3a3a; }
+.copiado-msg { font-size: 0.75rem; color: #2a7a2a; margin-top: 6px; display: none; font-weight: 600; }
+
+.form-presente { max-width: 500px; margin: 0 auto; text-align: left; }
+.ja-reservado-box {
+    max-width: 460px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 2px solid #a11;
+    background: #fdeeee;
+}
+
+@media (max-width: 768px) {
+    .hero-video-wrap video {
+    object-fit: cover;
+}
+    
+}
+
+@media (min-width: 640px) {
+    .newspaper { box-shadow: 0 0 40px rgba(0,0,0,0.25); }
+    .presentes-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+}
+
+@media (max-width: 400px) {
+    .radio-options { flex-direction: column; gap: 10px; }
+    .detalhes { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .newspaper {
+        max-width: 100%;
+        margin: 0;
+    }
+}
+

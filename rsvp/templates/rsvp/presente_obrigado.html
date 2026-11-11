@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Obrigado! - Lista de Presentes</title>
+    <link rel="stylesheet" href="{% static 'rsvp/css/style.css' %}">
+</head>
+<body>
+    <div class="newspaper">
+        <nav class="topnav">
+            <a href="{% url 'home' %}">Save the Date</a>
+            <a href="{% url 'presentes' %}">Lista de Presentes</a>
+        </nav>
+        <div class="masthead">
+            <div class="edicao left">Edição<br>Especial</div>
+            <h1>Extra!!! Extra!!!</h1>
+            <div class="edicao right">Edição<br>Especial</div>
+        </div>
+        <div class="obrigado-box">
+            <h1>Muito obrigado!</h1>
+            <p>Seu presente foi registrado com muito carinho.</p>
+            <p>Larissa &amp; Wagner agradecem de coração! 💛</p>
+            <a href="{% url 'presentes' %}">&larr; Ver mais presentes da lista</a>
+        </div>
+        <footer class="imprint">Larissa &amp; Wagner &middot; 10 de Junho de 2027 &middot; Natal - RN</footer>
+    </div>
+</body>
+</html>

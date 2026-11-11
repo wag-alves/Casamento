@@ -1,0 +1,65 @@
+# Execução local (3 containers: Nginx, Django/Gunicorn, PostgreSQL).
+# Tudo que muda entre ambientes vem do arquivo .env (veja .env.example).
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: casamento-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-casamento}
+      POSTGRES_USER: ${POSTGRES_USER:-casamento}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # volume nomeado: sobrevive a "docker compose down"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [rede-banco]
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: ${DOCKERHUB_USERNAME:-wagnernoronha}/casamento-backend:${IMAGE_TAG:-dev}
+    container_name: casamento-backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_ENGINE: postgresql
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      RUN_MIGRATIONS: "true"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks: [rede-banco, rede-web]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: ${DOCKERHUB_USERNAME:-wagnernoronha}/casamento-frontend:${IMAGE_TAG:-dev}
+    container_name: casamento-frontend
+    restart: unless-stopped
+    environment:
+      BACKEND_SCHEME: ${BACKEND_SCHEME:-http}
+      BACKEND_HOST: ${BACKEND_HOST:-backend}
+      BACKEND_PORT: ${BACKEND_PORT:-8000}
+    ports:
+      - "${HOST_PORT:-8080}:80"                  # único serviço publicado no host
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks: [rede-web]
+
+volumes:
+  postgres_data:
+
+networks:
+  rede-web:          # Nginx <-> Django
+    driver: bridge
+  rede-banco:        # Django <-> PostgreSQL; sem rota para fora e o Nginx não enxerga o banco
+    driver: bridge
+    internal: true

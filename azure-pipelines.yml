@@ -1,0 +1,130 @@
+# CI: valida o Django, testa a stack completa (Playwright), constrói e publica as imagens no Docker Hub.
+# O CD (implantação no Azure App Service) é o Classic Release descrito em docs/CLASSIC_RELEASE.md.
+#
+# Configuração (tudo em "variables" abaixo ou em Pipelines > Edit > Variables, sem mexer nos passos):
+#   - Service connection do Docker Hub (tipo Docker Registry) com o nome de dockerRegistryServiceConnection.
+
+# Versão semântica da imagem: 1.0.1, 1.0.2, ... (o último número sobe a cada execução).
+# Para uma versão maior/menor, mude majorMinor (ex.: '1.1', '2.0').
+name: $(majorMinor).$(Rev:r)
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr: none
+
+variables:
+  majorMinor: '1.0'
+  dockerRegistryServiceConnection: 'dockerhub-service-connection'
+  dockerHubNamespace: 'wagnernoronha'
+  backendImageName: 'casamento-backend'
+  frontendImageName: 'casamento-frontend'
+  pythonVersion: '3.12'
+  imageTag: 'v$(Build.BuildNumber)'      # tag semântica, ex.: v1.0.7 (nunca latest)
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+# ---------------------------------------------------------------- TESTES
+- stage: Testes
+  displayName: 'Validar Django e testar a stack (Playwright)'
+  jobs:
+  - job: Testes
+    displayName: 'Django check + docker compose + Playwright'
+    steps:
+    - checkout: self
+
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: $(pythonVersion)
+
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        python manage.py check
+        python manage.py makemigrations --check --dry-run
+      displayName: 'Instalar dependências e validar Django'
+      env:
+        DJANGO_SECRET_KEY: 'ci-only-secret-key-not-for-production'
+        DJANGO_DEBUG: 'True'
+
+    - script: |
+        cp .env.example .env
+        sed -i 's/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=ci-only-password/' .env
+        sed -i 's/^DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=ci-only-secret-key-not-for-production/' .env
+        sed -i 's/^IMAGE_TAG=.*/IMAGE_TAG=ci/' .env
+        docker compose up -d --build --wait
+      displayName: 'Subir a stack (Nginx + Django + PostgreSQL)'
+
+    - script: |
+        cd e2e
+        npm ci
+        npx playwright install --with-deps chromium
+        CI=true BASE_URL=http://localhost:8080 npx playwright test
+      displayName: 'Rodar testes Playwright'
+
+    - task: PublishTestResults@2
+      condition: always()
+      displayName: 'Publicar resultados dos testes'
+      inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: e2e/test-results/junit.xml
+        testRunTitle: 'e2e-stack-local'
+
+    - script: docker compose logs --no-color || true
+      condition: failed()
+      displayName: 'Logs dos containers (somente se falhar)'
+
+    - script: docker compose down -v
+      condition: always()
+      displayName: 'Derrubar a stack de teste'
+
+# ---------------------------------------------------------------- BUILD
+- stage: Build
+  displayName: 'Build e push das imagens (Docker Hub)'
+  dependsOn: Testes
+  jobs:
+  - job: BuildAndPush
+    displayName: 'Backend e frontend'
+    steps:
+    - checkout: self
+
+    - task: Docker@2
+      displayName: 'Build e push backend'
+      inputs:
+        command: buildAndPush
+        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: $(dockerHubNamespace)/$(backendImageName)
+        Dockerfile: backend/Dockerfile
+        buildContext: .
+        tags: |
+          $(imageTag)
+
+    - task: Docker@2
+      displayName: 'Build e push frontend Nginx'
+      inputs:
+        command: buildAndPush
+        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: $(dockerHubNamespace)/$(frontendImageName)
+        Dockerfile: frontend/Dockerfile
+        buildContext: .
+        tags: |
+          $(imageTag)
+
+    - script: |
+        mkdir -p $(Build.ArtifactStagingDirectory)/release
+        printf 'IMAGE_TAG=%s\nBACKEND_IMAGE=%s/%s\nFRONTEND_IMAGE=%s/%s\n' \
+          '$(imageTag)' '$(dockerHubNamespace)' '$(backendImageName)' \
+          '$(dockerHubNamespace)' '$(frontendImageName)' \
+          > $(Build.ArtifactStagingDirectory)/release/images.env
+      displayName: 'Gerar manifesto de imagens para o Release'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publicar manifesto para o Classic Release'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/release'
+        ArtifactName: 'release'
+        publishLocation: 'Container'

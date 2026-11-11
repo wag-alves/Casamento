@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Save the Date - {{ noivos }}</title>
+    <link rel="stylesheet" href="{% static 'rsvp/css/style.css' %}">
+</head>
+<body>
+    <div class="newspaper">
+        
+        <nav class="topnav">
+            <a href="{% url 'home' %}" class="ativo">Save the Date</a>
+            <a href="{% url 'presentes' %}">Lista de Presentes</a>
+        </nav>
+        
+        <div class="masthead">
+            <div class="edicao left">Edição<br>Única!</div>
+            <h1>Extra!!! Extra!!!</h1>
+            <div class="edicao right">Edição<br>Única!</div>
+        </div>
+        
+        <div class="dateline">
+            <span>{{ local }}</span>
+            <span>{{ horario }}</span>
+            <span>{{ data_casamento }}</span>
+        </div>
+        
+        <div class="hero-video-wrap">
+            <video autoplay muted loop playsinline preload="auto"
+                   poster="{% static 'rsvp/video/casal_poster.jpg' %}">
+                <source src="{% static 'rsvp/video/casal.mp4' %}" type="video/mp4">
+            </video>
+            <div class="hero-overlay">
+                <p>Larissa &amp; Wagner</p>
+            </div>
+        </div>
+
+        <div class="headline-block">
+            <p class="save">Save<span class="the">the</span>Date</p>
+        </div>
+
+        <p class="noivos-nome">{{ noivos }}</p>
+        <p class="subtitulo">vão se casar!</p>
+
+        <div class="banner">Contagem regressiva para o amor!</div>
+
+        <div class="timer" id="timer" data-alvo="2027-06-10T15:30:00-03:00" aria-live="off">
+            <div class="timer-bloco"><span class="timer-num" id="t-dias">--</span><span class="timer-rot">Dias</span></div>
+            <div class="timer-bloco"><span class="timer-num" id="t-horas">--</span><span class="timer-rot">Horas</span></div>
+            <div class="timer-bloco"><span class="timer-num" id="t-min">--</span><span class="timer-rot">Minutos</span></div>
+            <div class="timer-bloco"><span class="timer-num" id="t-seg">--</span><span class="timer-rot">Segundos</span></div>
+        </div>
+        <p class="timer-fim" id="timer-fim" hidden>É hoje! O grande dia chegou 💍</p>
+
+        <div class="detalhes">
+            <div>
+                <h3>Data</h3>
+                <p>{{ data_casamento }}</p>
+            </div>
+            <div>
+                <h3>Horário</h3>
+                <p>{{ horario }}</p>
+            </div>
+            <div>
+                <h3>Local</h3>
+                <p>{{ local }}</p>
+            </div>
+        </div>
+
+        <div class="cta-presentes">
+            <p>Quer ajudar a montar a casa nova? Dê uma olhada na nossa lista de presentes 🎁</p>
+            <a href="{% url 'presentes' %}">Ver lista de presentes</a>
+        </div>
+
+        <hr class="divider double">
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <div class="form-section">
+            <h2>Confirme sua presença</h2>
+            <p class="lead">Contamos com você nesse dia tão especial!</p>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="{{ form.nome.id_for_label }}">{{ form.nome.label }}</label>
+                    {{ form.nome }}
+                    {{ form.nome.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.telefone.id_for_label }}">{{ form.telefone.label }}</label>
+                    {{ form.telefone }}
+                    {{ form.telefone.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>{{ form.presenca.label }}</label>
+                    <div class="radio-options">
+                        {% for radio in form.presenca %}
+                            <label>{{ radio.tag }} {{ radio.choice_label }}</label>
+                        {% endfor %}
+                    </div>
+                    {{ form.presenca.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.acompanhantes.id_for_label }}">{{ form.acompanhantes.label }}</label>
+                    {{ form.acompanhantes }}
+                    {{ form.acompanhantes.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.mensagem.id_for_label }}">{{ form.mensagem.label }}</label>
+                    {{ form.mensagem }}
+                    {{ form.mensagem.errors }}
+                </div>
+
+                <button type="submit" class="btn-enviar">Confirmar presença</button>
+            </form>
+        </div>
+
+        <footer class="imprint">
+            Larissa &amp; Wagner &middot; {{ data_casamento }} &middot; {{ local }}
+        </footer>
+    </div>
+    <script>
+        (function () {
+            var el = document.getElementById('timer');
+            var alvo = new Date(el.getAttribute('data-alvo')).getTime();
+            var d = document.getElementById('t-dias'), h = document.getElementById('t-horas'),
+                m = document.getElementById('t-min'), sg = document.getElementById('t-seg'),
+                fim = document.getElementById('timer-fim');
+            function dois(n) { return n < 10 ? '0' + n : String(n); }
+            function tick() {
+                var resta = alvo - Date.now();
+                if (resta <= 0) {
+                    d.textContent = h.textContent = m.textContent = sg.textContent = '00';
+                    fim.hidden = false;
+                    return false;
+                }
+                var seg = Math.floor(resta / 1000);
+                d.textContent = Math.floor(seg / 86400);
+                h.textContent = dois(Math.floor(seg % 86400 / 3600));
+                m.textContent = dois(Math.floor(seg % 3600 / 60));
+                sg.textContent = dois(seg % 60);
+                return true;
+            }
+            if (tick()) {
+                var id = setInterval(function () { if (!tick()) clearInterval(id); }, 1000);
+            }
+        })();
+    </script>
+</body>
+</html>
