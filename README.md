@@ -156,3 +156,6 @@ O arquivo `db.sqlite3` do ZIP original foi preservado como referência, mas não
 ### Limites desta primeira adaptação
 
 As páginas HTML continuam sendo renderizadas pelos templates Django para preservar o site atual. O Nginx serve os arquivos estáticos e atua como proxy reverso; a API REST já existe para permitir a evolução do frontend desacoplado sem reescrever tudo de uma vez.
+
+
+TESTE
